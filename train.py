@@ -53,9 +53,12 @@ def train(args):
 
     model = Model(args)
 
-    with tf.Session() as sess:
-        summary_writer = tf.summary.FileWriter(os.path.join(args.model_dir, 'log'), sess.graph) 
-        
+    config = tf.ConfigProto(
+        gpu_options=tf.GPUOptions(visible_device_list="1")
+    )
+    with tf.Session(config=config) as sess:
+        summary_writer = tf.summary.FileWriter(os.path.join(args.model_dir, 'log'), sess.graph)
+
         tf.global_variables_initializer().run()
         saver = tf.train.Saver(tf.global_variables())
         for e in range(args.num_epochs):
@@ -69,11 +72,11 @@ def train(args):
                 start = time.time()
                 x, y = data_loader.next_batch()
                 feed = {model.input_data: x, model.target_data: y, model.state_in: state}
-                train_loss_summary, train_loss, state, _ = sess.run([model.train_loss_summary, model.cost, model.state_out, model.train_op], feed) 
-                summary_writer.add_summary(train_loss_summary, i)                 
-                
+                train_loss_summary, train_loss, state, _ = sess.run([model.train_loss_summary, model.cost, model.state_out, model.train_op], feed)
+                summary_writer.add_summary(train_loss_summary, i)
+
                 valid_loss_summary, valid_loss, = sess.run([model.valid_loss_summary, model.cost], valid_feed)
-                summary_writer.add_summary(valid_loss_summary, i)                 
+                summary_writer.add_summary(valid_loss_summary, i)
 
                 end = time.time()
                 print(
@@ -81,7 +84,7 @@ def train(args):
                     .format(
                         i,
                         args.num_epochs * data_loader.num_batches,
-                        e, 
+                        e,
                         train_loss, valid_loss, end - start))
                 if (e * data_loader.num_batches + b) % args.save_every == 0 and ((e * data_loader.num_batches + b) > 0):
                     checkpoint_path = os.path.join(args.model_dir, 'model.ckpt')

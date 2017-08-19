@@ -11,7 +11,7 @@ def get_bounds(data, factor):
   max_x = 0
   min_y = 0
   max_y = 0
-    
+
   abs_x = 0
   abs_y = 0
   for i in range(len(data)):
@@ -23,23 +23,23 @@ def get_bounds(data, factor):
     min_y = min(min_y, abs_y)
     max_x = max(max_x, abs_x)
     max_y = max(max_y, abs_y)
-    
+
   return (min_x, max_x, min_y, max_y)
 
 # old version, where each path is entire stroke (smaller svg size, but have to keep same color)
 def draw_strokes(data, factor=10, svg_filename = 'sample.svg'):
   min_x, max_x, min_y, max_y = get_bounds(data, factor)
   dims = (50 + max_x - min_x, 50 + max_y - min_y)
-    
+
   dwg = svgwrite.Drawing(svg_filename, size=dims)
   dwg.add(dwg.rect(insert=(0, 0), size=dims,fill='white'))
 
   lift_pen = 1
-    
-  abs_x = 25 - min_x 
+
+  abs_x = 25 - min_x
   abs_y = 25 - min_y
   p = "M%s,%s " % (abs_x, abs_y)
-    
+
   command = "m"
 
   for i in range(len(data)):
@@ -84,12 +84,12 @@ def draw_strokes_random_color(stroke, factor=10, svg_filename = 'sample_random_c
 def draw_strokes_custom_color(data, factor=10, svg_filename = 'test.svg', color_data = None, stroke_width = 1):
   min_x, max_x, min_y, max_y = get_bounds(data, factor)
   dims = (50 + max_x - min_x, 50 + max_y - min_y)
-    
+
   dwg = svgwrite.Drawing(svg_filename, size=dims)
   dwg.add(dwg.rect(insert=(0, 0), size=dims,fill='white'))
 
   lift_pen = 1
-  abs_x = 25 - min_x 
+  abs_x = 25 - min_x
   abs_y = 25 - min_y
 
   for i in range(len(data)):
@@ -126,7 +126,7 @@ def draw_strokes_pdf(data, param, factor=10, svg_filename = 'sample_pdf.svg'):
   dwg = svgwrite.Drawing(svg_filename, size=dims)
   dwg.add(dwg.rect(insert=(0, 0), size=dims,fill='white'))
 
-  abs_x = 25 - min_x 
+  abs_x = 25 - min_x
   abs_y = 25 - min_y
 
   num_mixture = len(param[0][0])

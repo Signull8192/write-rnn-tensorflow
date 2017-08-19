@@ -27,7 +27,7 @@ parser.add_argument('--model_dir', type=str, default='save',
                    help='directory to save model to')
 parser.add_argument('--freeze_graph', dest='freeze_graph', action='store_true',
                    help='if true, freeze (replace variables with consts), prune (for inference) and save graph')
-	
+
 sample_args = parser.parse_args()
 
 with open(os.path.join(sample_args.model_dir, 'config.pkl'), 'rb') as f:
@@ -60,7 +60,7 @@ def freeze_and_save_graph(sess, folder, out_nodes, as_text=False):
     ext = '.txt' if as_text else '.pb'
     #tf.train.write_graph(graph_raw, folder, 'graph_raw'+ext, as_text=as_text)
     tf.train.write_graph(graph_frz, folder, 'graph_frz'+ext, as_text=as_text)
-    
+
 
 if(sample_args.freeze_graph):
     freeze_and_save_graph(sess, sample_args.model_dir, ['data_out_mdn', 'data_out_eos', 'state_out'], False)
