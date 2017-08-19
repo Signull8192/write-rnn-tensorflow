@@ -49,8 +49,8 @@ def main():
                         help='number of gaussian mixtures')
     parser.add_argument('--data_scale', type=float, default=20,
                         help='factor to scale raw data down by')
-    # parser.add_argument('--keep_prob', type=float, default=0.8,
-    #                    help='dropout keep probability')
+    parser.add_argument('--keep_prob', type=float, default=0.8,
+                        help='dropout keep probability')
     args = parser.parse_args()
 
     data_loader = DataLoader(args.batch_size, args.seq_length, args.data_scale)
@@ -61,7 +61,9 @@ def main():
     with open(os.path.join(args.model_dir, 'config.pkl'), 'wb') as f:
         pickle.dump(args, f)
 
-    model = Model(args.nb_layers, args.nb_units, args.nb_mixtures)
+    model = Model(args.nb_layers, args.nb_units,
+                  args.nb_mixtures, args.data_scale,
+                  args.keep_prob)
 
     if args.resume != "":
         serializers.load_npz(args.resume, model)
@@ -113,7 +115,8 @@ def main():
                   .format(i, args.nb_epochs * data_loader.num_batches,
                           e, sum_loss / (b + 1), valid_loss, end - start))
             if (e * data_loader.num_batches + b) % args.save_every == 0 and ((e * data_loader.num_batches + b) > 0):
-                checkpoint_path = os.path.join(args.model_dir, 'model.npz')
+                checkpoint_path = os.path.join(args.model_dir,
+                                               'model_{}.npz'.format(i))
                 serializers.save_npz(checkpoint_path, model)
                 print("model saved to {}".format(checkpoint_path))
 
